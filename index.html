@@ -38,11 +38,11 @@
         better legibility on the light cards.  Corner radius increased for a
         friendlier appearance.
       */
-      --bg:#f9fbff;        /* page background */
+      --bg:#f3f4f6;        /* page background (slightly darker for contrast) */
       --card:#ffffff;      /* card/panel backgrounds */
-      --text:#222a40;      /* primary text colour */
-      --muted:#5c6b8e;     /* secondary/muted text */
-      --line:rgba(0,0,0,.08); /* border lines */
+      --text:#111827;      /* primary text (near-black for readability) */
+      --muted:#374151;     /* secondary text (darker than before) */
+      --line:rgba(17,24,39,.14); /* borders a bit clearer */
       /*
         Adjusted the accent colours to a softer palette.  The primary
         accent has been toned down to a gentler blue and the secondary
@@ -90,7 +90,7 @@
     .brand span{display:block; font-size:12px; color:var(--muted)}
     .links{display:flex; align-items:center; gap:14px; flex-wrap:wrap}
     .links a{font-size:13px; color:var(--muted); padding:8px 10px; border-radius:10px}
-    .links a:hover{background:rgba(255,255,255,.06); color:var(--text)}
+    .links a:hover{background:rgba(17,24,39,.06); color:var(--text)}
     .cta{
       display:inline-flex; align-items:center; justify-content:center;
       padding:10px 14px; border-radius:12px;
@@ -116,7 +116,7 @@
     .pill{
       padding:8px 10px; border-radius:999px;
       border:1px solid var(--line);
-      background: rgba(255,255,255,.04);
+      background: rgba(17,24,39,.04);
       color:var(--muted); font-size:12px;
     }
     .card{
@@ -185,7 +185,7 @@
       border-radius:12px;
       /* A light translucent background for input fields helps them feel
          integrated with the card while still separated from the content */
-      background: rgba(255,255,255,.8);
+      background: rgba(255,255,255,.92);
       border:1px solid var(--line);
       color: var(--text);
       outline:none;
@@ -205,7 +205,7 @@
     .ghost:hover{background: #e9effa}
     .toast{
       position:fixed; left:50%; bottom:18px; transform:translateX(-50%);
-      background: rgba(255,255,255,.92);
+      background: rgba(255,255,255,.98);
       border:1px solid var(--line);
       color: var(--text);
       padding:10px 12px;

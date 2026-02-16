@@ -1,15 +1,17 @@
 /* 기본 상태 (라이트 모드) */
 body {
-    background-color: #ffffff; /* 하얀 배경 */
-    color: #000000;           /* 검은 글자 */
-    transition: background-color 0.5s, color 0.5s; /* 색 변화를 부드럽게 */
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    height: 100vh;
+    background-color: #ffffff;
+    color: #000000;
+    transition: background-color 0.5s, color 0.5s;
     margin: 0;
     font-family: sans-serif;
+}
+
+.container {
+    max-width: 1100px;
+    width: 100%;
+    margin: 0 auto;
+    padding: 20px;
 }
 
 /* 다크 모드 상태 (body에 dark-mode 클래스가 추가되면 작동) */
@@ -20,17 +22,35 @@ body.dark-mode {
 
 /* 버튼 디자인 */
 button {
-    padding: 10px 20px;
-    font-size: 18px;
+    padding: 12px 20px;
+    font-size: 16px;
     cursor: pointer;
     border-radius: 10px;
     border: 2px solid #333;
     background-color: #eee;
     transition: 0.3s;
+    width: auto;
 }
 
 body.dark-mode button {
     background-color: #444;
     color: white;
     border-color: #fff;
+}
+
+/* 📱 Mobile optimization */
+@media (max-width: 600px) {
+
+    body {
+        padding: 10px;
+    }
+
+    .container {
+        padding: 10px;
+    }
+
+    button {
+        width: 100%;
+        font-size: 16px;
+    }
 }
