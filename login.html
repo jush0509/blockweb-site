@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>로그인/회원가입 - 블록셀</title>
+    <title>로그인/회원가입 - 블록웹스튜디오</title>
     <link rel="stylesheet" as="style" crossorigin href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.min.css" />
     <script src="https://cdn.tailwindcss.com"></script>
     <style>body { font-family: 'Pretendard', sans-serif; }</style>
@@ -24,7 +24,7 @@
             </div>
 
             <h2 id="formTitle" class="text-2xl font-bold text-slate-900 mb-2">환영합니다!</h2>
-            <p id="formDesc" class="text-slate-500 text-sm mb-8">블록셀 계정으로 서비스를 시작하세요.</p>
+            <p id="formDesc" class="text-slate-500 text-sm mb-8">블록웹스튜디오 계정으로 시작하세요.</p>
 
             <form id="authForm" class="space-y-5">
                 <div>
@@ -91,8 +91,7 @@
         const otpInputs = document.querySelectorAll('.otp-input');
         const forgotPw = document.getElementById('forgotPw');
 
-        let mode = 'login'; // 'login', 'signup', 'forgot'
-
+        let mode = 'login'; 
         const WORKER_URL = 'https://blockwebstudio-auth.jush0509.workers.dev';
 
         // 탭 전환: 회원가입
@@ -128,22 +127,21 @@
             pwConfirmWrapper.classList.add('hidden');
         };
 
-        // 폼 제출 로직
+        // 폼 제출 (로그인 또는 인증번호 발송 요청)
         authForm.onsubmit = async (e) => {
             e.preventDefault();
             
-            // 보안 체크: 8자리 이상 (브라우저가 1차로 막지만 스크립트로 2차 확인)
             if (authPw.value.length < 8) {
                 alert("비밀번호는 최소 8자리 이상이어야 합니다.");
                 return;
             }
 
-            // 보안 체크: 비밀번호 일치 (회원가입 시)
             if (mode === 'signup' && authPw.value !== authPwConfirm.value) {
                 alert("비밀번호 재확인이 일치하지 않습니다.");
                 return;
             }
 
+            // [Case A] 회원가입 또는 비밀번호 찾기 (인증번호 발송)
             if(mode === 'signup' || mode === 'forgot') {
                 submitBtn.innerText = "발송 중...";
                 submitBtn.disabled = true;
@@ -153,8 +151,8 @@
                         method: 'POST',
                         headers: { 'Content-Type': 'application/json' },
                         body: JSON.stringify({ 
-                            email: authEmail.value,
-                            type: mode // 회원가입인지 비밀번호 찾기인지 구분값 전송
+                            action: "send_otp",
+                            email: authEmail.value 
                         })
                     });
 
@@ -170,17 +168,43 @@
                         alert("요청 실패: " + (data.error || "다시 시도해주세요."));
                     }
                 } catch (err) {
-                    alert("서버 통신 오류");
+                    alert("서버 통신 오류가 발생했습니다.");
                 } finally {
                     submitBtn.innerText = mode === 'signup' ? "가입하기" : "인증 코드 발송";
                     submitBtn.disabled = false;
                 }
-            } else {
-                alert("로그인 시도...");
+            } 
+            // [Case B] 로그인 시도
+            else {
+                submitBtn.innerText = "로그인 중...";
+                submitBtn.disabled = true;
+                try {
+                    const response = await fetch(WORKER_URL, {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ 
+                            action: "login",
+                            email: authEmail.value,
+                            password: authPw.value
+                        })
+                    });
+                    const data = await response.json();
+                    if(data.success) {
+                        alert("로그인에 성공했습니다!");
+                        window.location.href = "index.html"; 
+                    } else {
+                        alert(data.error || "로그인 정보를 확인해주세요.");
+                    }
+                } catch (err) {
+                    alert("서버 연결 실패");
+                } finally {
+                    submitBtn.innerText = "로그인하기";
+                    submitBtn.disabled = false;
+                }
             }
         };
 
-        // OTP 자동 포커스
+        // OTP 입력 포커스 이동
         otpInputs.forEach((input, index) => {
             input.addEventListener('input', (e) => {
                 if (e.target.value.length === 1 && index < otpInputs.length - 1) {
@@ -194,17 +218,35 @@
             });
         });
 
-        // 인증 완료 버튼
-        document.getElementById('verifyBtn').onclick = () => {
+        // [Step 2] 인증 완료 버튼 (OTP 검증 및 계정 생성/변경)
+        document.getElementById('verifyBtn').onclick = async () => {
             const code = Array.from(otpInputs).map(i => i.value).join('');
             if(code.length < 6) {
-                alert("6자리 번호를 입력해주세요.");
-            } else {
-                if(mode === 'forgot') {
-                    alert("인증 성공! 새로운 비밀번호로 변경합니다.");
+                alert("6자리 번호를 모두 입력해주세요.");
+                return;
+            }
+
+            try {
+                const response = await fetch(WORKER_URL, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ 
+                        action: "verify_otp",
+                        email: authEmail.value,
+                        password: authPw.value,
+                        otp: code
+                    })
+                });
+                const data = await response.json();
+
+                if(data.success) {
+                    alert(mode === 'forgot' ? "비밀번호가 성공적으로 변경되었습니다!" : "회원가입이 완료되었습니다! 로그인해 주세요.");
+                    location.reload(); 
                 } else {
-                    alert("회원가입이 성공적으로 완료되었습니다!");
+                    alert(data.error || "인증번호가 일치하지 않습니다.");
                 }
+            } catch (err) {
+                alert("인증 처리 중 오류가 발생했습니다.");
             }
         };
     </script>
