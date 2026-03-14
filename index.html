@@ -1,523 +1,166 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="ko">
 <head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <meta name="referrer" content="no-referrer" />
-  <meta http-equiv="X-Content-Type-Options" content="nosniff" />
-  <meta http-equiv="Content-Security-Policy" content="
-    default-src 'self';
-    img-src 'self' data:;
-    style-src 'self' 'unsafe-inline';
-    script-src 'self' 'unsafe-inline';
-    base-uri 'self';
-    form-action 'self';
-    frame-ancestors 'none';
-    upgrade-insecure-requests;
-  " />
-  <!-- 업데이트된 제목과 설명: 초보자와 소상공인을 위한 서비스 강조 -->
-  <title>블록웹 스튜디오 | 블록으로 만드는 내 홈페이지</title>
-  <meta name="description" content="블록웹 스튜디오는 블록 기반으로 쉽고 빠르게 ‘내 홈페이지’를 만드는 웹 제작 플랫폼입니다. 초보 창업자·소상공인을 위한 간단한 제작 흐름과 확장 가능한 구조를 제공합니다." />
-  <meta property="og:type" content="website" />
-  <meta property="og:title" content="블록웹 스튜디오 | 블록으로 만드는 내 홈페이지" />
-  <meta property="og:description" content="블록 기반으로 쉽고 빠르게 ‘내 홈페이지’를 만드는 웹 제작 플랫폼. 초보 창업자·소상공인을 위한 간단한 제작 흐름과 확장 가능한 구조." />
-  <meta property="og:locale" content="ko_KR" />
-
-  <style>
-    :root{
-      /*
-        The root defines the colour palette and radius for the site.  These values
-        produce a bright interface with crisp contrast for readability.  The dark
-        mode variables and classes have been removed for simplicity.  Rounded
-        corners provide a modern, friendly feel.
-      */
-      /*
-        Light theme palette tweaks for improved contrast and readability.  The
-        background is now a very pale blue‑grey, cards are pure white and
-        shadows are softened.  Muted text has been darkened slightly for
-        better legibility on the light cards.  Corner radius increased for a
-        friendlier appearance.
-      */
-      --bg:#f3f4f6;        /* page background (slightly darker for contrast) */
-      --card:#ffffff;      /* card/panel backgrounds */
-      --text:#111827;      /* primary text (near-black for readability) */
-      --muted:#374151;     /* secondary text (darker than before) */
-      --line:rgba(17,24,39,.14); /* borders a bit clearer */
-      /*
-        Adjusted the accent colours to a softer palette.  The primary
-        accent has been toned down to a gentler blue and the secondary
-        accent moved towards a pastel shade.  This helps headings,
-        buttons and highlights stand out without overwhelming the light
-        background.
-      */
-      --accent:#4c8eff;    /* main accent colour */
-      --accent2:#745cdd;   /* secondary accent colour */
-      --shadow:0 16px 40px rgba(0,0,0,.05); /* subtle shadow */
-      --radius:18px;       /* unified border radius */
-    }
-    /* Removed dark theme variables to simplify the design.  The page now
-       presents a single, cohesive light theme. */
-    *{box-sizing:border-box}
-    body{
-      margin:0;
-      font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, "Apple SD Gothic Neo", "Noto Sans KR", Arial, sans-serif;
-      background:
-        radial-gradient(1200px 600px at 20% 10%, rgba(106,166,255,.25), transparent 60%),
-        radial-gradient(900px 500px at 90% 30%, rgba(139,92,246,.18), transparent 55%),
-        var(--bg);
-      color:var(--text);
-      line-height:1.5;
-      transition:background-color .3s ease,color .3s ease;
-    }
-    a{color:inherit; text-decoration:none}
-    .wrap{max-width:1100px; margin:0 auto; padding:24px}
-    .nav{
-      position:sticky; top:0; z-index:10;
-      backdrop-filter: blur(10px);
-      /* Unified light navigation bar: use a soft gradient from nearly white
-         to a slightly tinted white for separation without harsh contrasts. */
-      background: linear-gradient(to bottom, rgba(255,255,255,.92), rgba(255,255,255,.75));
-      border-bottom:1px solid var(--line);
-    }
-    .navinner{display:flex; align-items:center; justify-content:space-between; gap:16px}
-    .brand{display:flex; align-items:center; gap:12px}
-    .logo{
-      width:38px; height:38px; border-radius:12px;
-      background: linear-gradient(135deg, var(--accent), var(--accent2));
-      box-shadow: var(--shadow);
-    }
-    .brand strong{font-size:14px; letter-spacing:.2px}
-    .brand span{display:block; font-size:12px; color:var(--muted)}
-    .links{display:flex; align-items:center; gap:14px; flex-wrap:wrap}
-    .links a{font-size:13px; color:var(--muted); padding:8px 10px; border-radius:10px}
-    .links a:hover{background:rgba(17,24,39,.06); color:var(--text)}
-    .cta{
-      display:inline-flex; align-items:center; justify-content:center;
-      padding:10px 14px; border-radius:12px;
-      background: linear-gradient(135deg, var(--accent), var(--accent2));
-      font-weight:700; font-size:13px;
-      box-shadow: 0 14px 30px rgba(106,166,255,.18);
-      border:1px solid rgba(255,255,255,.12);
-      cursor:pointer;
-    }
-    .cta:hover{filter:brightness(1.05)}
-    .hero{padding:54px 0 10px}
-    .grid{
-      display:grid; grid-template-columns: 1.25fr .75fr; gap:18px; align-items:stretch;
-    }
-    @media (max-width: 860px){ .grid{grid-template-columns:1fr} }
-    h1{
-      margin:0 0 12px;
-      font-size:44px; line-height:1.12; letter-spacing:-.6px;
-    }
-    @media (max-width: 520px){ h1{font-size:34px} }
-    .sub{color:var(--muted); font-size:16px; max-width:56ch}
-    .pillrow{display:flex; gap:10px; flex-wrap:wrap; margin-top:18px}
-    .pill{
-      padding:8px 10px; border-radius:999px;
-      border:1px solid var(--line);
-      background: rgba(17,24,39,.04);
-      color:var(--muted); font-size:12px;
-    }
-    .card{
-      /* Unified card style: pure white background for maximum contrast */
-      background: var(--card);
-      border:1px solid var(--line);
-      border-radius: var(--radius);
-      box-shadow: var(--shadow);
-    }
-    .herocard{padding:18px}
-    .box{
-      padding:18px;
-      display:flex; flex-direction:column; gap:12px;
-      min-height: 260px;
-    }
-    .kpi{
-      display:grid; grid-template-columns: repeat(3, 1fr); gap:10px;
-      margin-top:12px;
-    }
-    .kpi .k{
-      padding:12px; border-radius:16px; border:1px solid var(--line);
-      /* Provide a light pastel backdrop for KPI statistics to stand out on the light theme */
-      background: #eef3fe;
-    }
-    /* Removed separate `.light` definition for KPI cards; the base style above applies */
-
-    /* The unified card style is defined above; no need to redeclare here */
-    .k .n{font-size:18px; font-weight:800}
-    .k .t{font-size:12px; color:var(--muted); margin-top:4px}
-    section{padding:28px 0}
-    .sectitle{font-size:20px; margin:0 0 12px}
-    .secdesc{color:var(--muted); margin:0 0 18px}
-    .cards{
-      display:grid; grid-template-columns: repeat(3, 1fr); gap:14px;
-    }
-    @media (max-width: 860px){ .cards{grid-template-columns:1fr} }
-    .feat{padding:16px}
-    .feat h3{margin:0 0 8px; font-size:15px}
-    .feat p{margin:0; color:var(--muted); font-size:13px}
-    .split{
-      display:grid; grid-template-columns: 1fr 1fr; gap:14px;
-    }
-    @media (max-width: 860px){ .split{grid-template-columns:1fr} }
-    .list{margin:0; padding-left:18px; color:var(--muted)}
-    .list li{margin:8px 0}
-    .banner{
-      padding:18px;
-      display:flex; align-items:center; justify-content:space-between; gap:14px;
-      flex-wrap:wrap;
-    }
-    .banner strong{font-size:16px}
-    .banner span{display:block; color:var(--muted); font-size:13px; margin-top:4px}
-    .footer{
-      padding:26px 0 40px;
-      color:var(--muted);
-      border-top:1px solid var(--line);
-      margin-top:18px;
-      font-size:12px;
-    }
-    .footgrid{display:flex; justify-content:space-between; gap:16px; flex-wrap:wrap}
-    .mini a{color:var(--muted); margin-right:12px}
-    .mini a:hover{color:var(--text)}
-    .input{
-      width:100%;
-      padding:12px 12px;
-      border-radius:12px;
-      /* A light translucent background for input fields helps them feel
-         integrated with the card while still separated from the content */
-      background: rgba(255,255,255,.92);
-      border:1px solid var(--line);
-      color: var(--text);
-      outline:none;
-    }
-    .row{display:grid; grid-template-columns: 1fr 1fr; gap:10px}
-    @media (max-width: 700px){ .row{grid-template-columns:1fr} }
-    .note{font-size:12px; color:var(--muted)}
-    .btnline{display:flex; gap:10px; flex-wrap:wrap; margin-top:16px}
-    .ghost{
-      padding:10px 14px; border-radius:12px;
-      border:1px solid var(--line);
-      background: #f5f7fc;
-      color: var(--text);
-      font-weight:700; font-size:13px;
-      cursor:pointer;
-    }
-    .ghost:hover{background: #e9effa}
-    .toast{
-      position:fixed; left:50%; bottom:18px; transform:translateX(-50%);
-      background: rgba(255,255,255,.98);
-      border:1px solid var(--line);
-      color: var(--text);
-      padding:10px 12px;
-      border-radius:14px;
-      box-shadow: var(--shadow);
-      display:none;
-      font-size:13px;
-      max-width: min(520px, calc(100vw - 32px));
-    }
-  </style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="Content-Security-Policy" content="upgrade-insecure-requests; default-src 'self' https:; script-src 'self' https://cdn.tailwindcss.com 'unsafe-inline'; style-src 'self' https://cdn.jsdelivr.net 'unsafe-inline'; font-src 'self' https://cdn.jsdelivr.net;">
+    
+    <title>블록셀(BlockCel) by blockwebstudio</title>
+    <link rel="stylesheet" as="style" crossorigin href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.min.css" />
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>body { font-family: 'Pretendard', sans-serif; }</style>
 </head>
+<body class="bg-[#F8FAFC] text-slate-800 antialiased select-none relative">
 
-<body>
-  <!-- 상단 내비 -->
-  <div class="nav">
-    <div class="wrap navinner">
-      <a class="brand" href="#top" aria-label="홈" onclick="window.scrollTo({ top: 0, behavior: 'smooth' }); return false;">
-        <div class="logo" aria-hidden="true"></div>
-        <div>
-          <strong>블록웹</strong>
-          <span>Blockweb Studio</span>
-        </div>
-      </a>
-
-      <div class="links" aria-label="메뉴">
-        <a href="#about">회사소개</a>
-        <a href="#tech">기술/차별점</a>
-        <!-- 기존 서비스 섹션(#product)을 제거하고 기능 섹션(#features)으로 이동 -->
-        <a href="#features">주요 기능</a>
-        <a href="#contact">문의</a>
-        <button class="cta js-go-builder" id="goBuilderTop" type="button">웹 제작 시작하기 →</button>
-      </div>
-    </div>
-  </div>
-
-  <main id="top" class="wrap">
-    <!-- 히어로 -->
-    <div class="hero">
-      <div class="grid">
-        <div class="card herocard">
-          <h1>블록으로 만드는 내 홈페이지</h1>
-          <p class="sub">
-            블록웹 스튜디오는 초보 창업자·소상공인을 위해, 블록 기반으로 빠르게 만들고 필요하면 확장할 수 있는 웹 제작 흐름을 제공합니다.
-            복잡한 코딩 없이도 구조를 조립하듯 홈페이지를 완성할 수 있습니다.
-          </p>
-
-          <div class="btnline">
-            <button class="cta js-go-builder" id="goBuilderHero" type="button">웹 제작 시작하기 →</button>
-            <a class="ghost" href="#features">서비스 소개 보기</a>
-          </div>
-
-          <div class="pillrow" aria-label="키워드">
-            <div class="pill">블록 기반 편집</div>
-            <div class="pill">반응형 지원(목표)</div>
-            <div class="pill">교육/프로토타입</div>
-            <div class="pill">빠른 배포 흐름</div>
-          </div>
-        </div>
-
-        <div class="card box" aria-label="요약">
-          <div style="font-weight:800; font-size:14px;">한눈에 보기</div>
-          <div style="color:var(--muted); font-size:13px;">
-            로고/상세 스펙이 아직 없어도, 이 페이지는 “신뢰 + 설명 + 문의/시작” 역할을 먼저 수행하도록 설계되었습니다.
-          </div>
-
-          <div class="kpi" aria-label="지표">
-            <div class="k">
-              <div class="n">간단</div>
-              <div class="t">설명 중심 구조</div>
+    <header class="fixed top-0 w-full bg-white/80 backdrop-blur-md border-b border-slate-200 z-40">
+        <div class="max-w-7xl mx-auto px-6 py-4 flex justify-between items-center">
+            <div class="font-extrabold text-2xl tracking-tight text-slate-900 flex items-center gap-2">
+                <div class="w-6 h-6 bg-indigo-600 rounded-md"></div>
+                blockwebstudio
             </div>
-            <div class="k">
-              <div class="n">연결</div>
-              <div class="t">서비스로 유도</div>
+            <div class="flex items-center space-x-4">
+                <a href="login.html" class="text-sm font-semibold text-slate-600 hover:text-slate-900 transition">로그인</a>
+                <a href="login.html" class="text-sm font-semibold bg-slate-900 text-white px-5 py-2.5 rounded-lg hover:bg-slate-800 transition shadow-sm">
+                    무료로 시작하기
+                </a>
             </div>
-            <div class="k">
-              <div class="n">확장</div>
-              <div class="t">나중에 페이지 추가</div>
-            </div>
-          </div>
-
         </div>
-      </div>
+    </header>
+
+    <section class="max-w-6xl mx-auto px-6 pt-36 pb-20 text-center">
+        <h1 class="text-4xl md:text-6xl font-extrabold tracking-tight text-slate-900 leading-[1.15] mb-6">
+            복잡한 엑셀 수식, <br class="hidden md:block" />
+            이제 <span class="text-transparent bg-clip-text bg-gradient-to-r from-indigo-600 to-blue-500">한글로 명령하세요.</span>
+        </h1>
+        <p class="text-lg md:text-xl text-slate-500 font-medium mb-12">
+            드래그하고, 한글로 적으면 끝. 블록셀이 1초 만에 업무를 대신합니다.
+        </p>
+
+        <div class="relative max-w-5xl mx-auto rounded-2xl overflow-hidden shadow-[0_20px_50px_rgba(8,_112,_184,_0.15)] border border-slate-200 bg-slate-900">
+            <div class="flex items-center gap-2 px-4 py-3 bg-slate-800 border-b border-slate-700">
+                <div class="w-3 h-3 rounded-full bg-red-500"></div>
+                <div class="w-3 h-3 rounded-full bg-yellow-500"></div>
+                <div class="w-3 h-3 rounded-full bg-green-500"></div>
+            </div>
+            <div class="aspect-video bg-slate-900 flex flex-col items-center justify-center text-slate-400 cursor-pointer group hover:bg-slate-800 transition">
+                <div class="w-16 h-16 bg-indigo-600 rounded-full flex items-center justify-center mb-4 group-hover:scale-110 transition shadow-lg">
+                    <svg class="w-8 h-8 text-white ml-1" fill="currentColor" viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>
+                </div>
+                <span class="font-semibold text-lg text-white">블록셀 작동 영상 보기 (15초)</span>
+            </div>
+        </div>
+    </section>
+
+    <section class="max-w-6xl mx-auto px-6 pb-24 pt-10 w-full">
+        <div class="text-center mb-10 text-sm font-semibold">
+            <div class="inline-flex flex-col md:flex-row items-center gap-3 px-6 py-4 bg-slate-800 text-white rounded-2xl shadow-lg mx-auto w-full md:w-auto text-left md:text-center">
+                <div class="flex items-center gap-2">
+                    <svg class="w-5 h-5 text-orange-400 shrink-0" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M10 1.944A11.954 11.954 0 012.166 5C2.056 5.682 2 6.35 2 7c0 5.225 3.34 9.67 8 11.317C14.66 16.67 18 12.225 18 7c0-.682-.057-1.35-.166-2.001A11.954 11.954 0 0110 1.944zM11 14a1 1 0 11-2 0 1 1 0 012 0zm0-7a1 1 0 10-2 0v3a1 1 0 102 0V7z" clip-rule="evenodd"></path></svg>
+                    <span class="text-orange-400 font-bold">100% 철통 보안:</span>
+                </div>
+                <span class="text-slate-200">모든 유저에게 Cloudflare 기반 보안과 데이터 비학습을 기본 보장합니다.</span>
+            </div>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-8 mt-8">
+            <div class="bg-white rounded-3xl p-8 border border-slate-200 shadow-sm flex flex-col">
+                <h3 class="text-lg font-bold text-slate-900 mb-2">Free</h3>
+                <div class="mb-8"><span class="text-4xl font-extrabold text-slate-900">₩0</span><span class="text-slate-500">/월</span></div>
+                <ul class="space-y-4 mb-8 flex-1 text-slate-600 text-sm">
+                    <li>✔️ 월 10회 질문 무료</li>
+                    <li>✔️ 기본 엑셀 함수 생성</li>
+                </ul>
+                <a href="login.html" class="w-full py-3.5 rounded-xl font-bold text-center text-slate-700 bg-slate-100 hover:bg-slate-200 transition">무료로 시작하기</a>
+            </div>
+
+            <div class="bg-slate-900 rounded-3xl p-8 border border-slate-800 shadow-2xl flex flex-col relative transform md:-translate-y-4">
+                <div class="absolute top-0 left-1/2 transform -translate-x-1/2 -translate-y-1/2 bg-indigo-500 text-white px-4 py-1 rounded-full text-xs font-bold uppercase">Most Popular</div>
+                <h3 class="text-lg font-bold text-white mb-2">Pro</h3>
+                <div class="mb-8"><span class="text-4xl font-extrabold text-white">₩9,900</span><span class="text-slate-400">/월</span></div>
+                <ul class="space-y-4 mb-8 flex-1 text-slate-300 text-sm">
+                    <li class="text-white font-semibold">✔️ 무제한 엑셀 수식 생성</li>
+                    <li class="text-white font-semibold">✔️ 드래그 앤 매크로(VBA) 생성</li>
+                    <li class="text-white font-semibold">✔️ 복잡한 세금/감가상각 계산</li>
+                </ul>
+                <a href="login.html" class="w-full py-3.5 rounded-xl font-bold text-center text-white bg-indigo-600 hover:bg-indigo-500 transition shadow-lg">Pro 구독하기</a>
+            </div>
+
+            <div class="bg-white rounded-3xl p-8 border border-slate-200 shadow-sm flex flex-col relative overflow-hidden">
+                <div class="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-blue-400 to-indigo-500"></div>
+                <h3 class="text-lg font-bold text-slate-900 mb-2">Business</h3>
+                <div class="mb-8"><span class="text-4xl font-extrabold text-slate-900">₩15,000</span><span class="text-slate-500">/인당</span></div>
+                <ul class="space-y-4 mb-8 flex-1 text-slate-600 text-sm">
+                    <li>✔️ Pro 플랜의 모든 기능</li>
+                    <li class="font-bold text-slate-900">✔️ 팀원 계정 일괄 관리</li>
+                    <li class="font-bold text-slate-900">✔️ 사내 공용 프롬프트 공유</li>
+                </ul>
+                <a href="login.html" class="w-full py-3.5 rounded-xl font-bold text-center text-indigo-700 bg-indigo-50 hover:bg-indigo-100 transition border border-indigo-100">도입 문의하기</a>
+            </div>
+        </div>
+    </section>
+    <footer class="bg-white pt-16 pb-8 border-t border-slate-100">
+        <div class="max-w-6xl mx-auto px-6 flex flex-col md:flex-row justify-between items-center gap-8 mb-8">
+            <div class="text-left">
+                <div class="font-extrabold text-xl text-slate-900 mb-2">blockwebstudio</div>
+                <p class="text-slate-500 text-sm">당신의 편의가 가장 먼저입니다.</p>
+            </div>
+            <div class="md:text-right">
+                <button id="openModalBtn" class="bg-indigo-50 text-indigo-600 font-bold px-6 py-3 rounded-xl hover:bg-indigo-100 transition">1:1 문의 접수하기</button>
+                <p class="text-slate-400 text-xs mt-2">평일 10:00 - 18:00 (공휴일 휴무)</p>
+            </div>
+        </div>
+        <div class="text-center text-slate-400 text-sm pt-8 border-t border-slate-50">
+            © 2026 blockwebstudio. All rights reserved.
+        </div>
+    </footer>
+
+    <div id="csModal" class="hidden fixed inset-0 z-50 flex items-center justify-center p-4">
+        <div id="modalBackdrop" class="absolute inset-0 bg-slate-900/40 backdrop-blur-sm"></div>
+        <div class="bg-white p-8 rounded-2xl shadow-2xl w-full max-w-md relative z-10">
+            <button id="closeModalBtn" class="absolute top-5 right-5 text-slate-400 hover:text-slate-600">✕</button>
+            <h3 class="text-2xl font-bold mb-2 text-slate-900">문의 접수</h3>
+            <p class="text-sm text-slate-500 mb-6">입력하신 이메일로 답변을 보내드립니다.</p>
+            <form id="csForm" class="space-y-4">
+                <div>
+                    <label class="block text-sm font-bold text-slate-700 mb-1">회신 이메일</label>
+                    <input type="text" id="replyEmail" placeholder="example@blockwebstudio.com" class="w-full px-4 py-3 rounded-lg border border-slate-300 outline-none focus:border-indigo-500">
+                    <p id="emailError" class="text-red-500 text-xs font-medium mt-1.5 hidden">⚠️ 올바른 이메일 형식을 써주세요.</p>
+                </div>
+                <div>
+                    <label class="block text-sm font-bold text-slate-700 mb-1">문의 내용</label>
+                    <textarea rows="4" class="w-full px-4 py-3 rounded-lg border border-slate-300 outline-none focus:border-indigo-500 resize-none"></textarea>
+                </div>
+                <button type="submit" class="w-full bg-indigo-600 text-white font-bold py-3.5 rounded-xl hover:bg-indigo-700 transition">접수하기</button>
+            </form>
+        </div>
     </div>
 
-    <!-- 회사 소개 -->
-    <section id="about">
-      <h2 class="sectitle">회사 소개</h2>
-      <p class="secdesc">
-        블록웹 스튜디오는 웹 제작의 진입 장벽을 낮추는 도구를 개발합니다.
-        누구나 아이디어를 빠르게 웹 형태로 구현할 수 있도록 돕습니다.
-      </p>
+    <script>
+        const modal = document.getElementById('csModal');
+        const openBtn = document.getElementById('openModalBtn');
+        const closeBtn = document.getElementById('closeModalBtn');
+        const backdrop = document.getElementById('modalBackdrop');
+        const form = document.getElementById('csForm');
+        const emailInput = document.getElementById('replyEmail');
+        const errorText = document.getElementById('emailError');
 
-      <div class="split">
-        <div class="card feat">
-          <h3>우리가 해결하는 문제</h3>
-          <ul class="list">
-            <li>웹 제작이 코딩/호스팅 때문에 어렵게 느껴짐</li>
-            <li>템플릿은 빠르지만 원하는 구조로 바꾸기 어려움</li>
-            <li>기획·디자인·개발·배포가 분리되어 시간이 오래 걸림</li>
-            <li>초보자와 소상공인을 위한 간편한 진입 경로가 부재</li>
-          </ul>
-        </div>
-        <div class="card feat">
-          <h3>우리가 지향하는 방식</h3>
-          <ul class="list">
-            <li>블록(컴포넌트) 기반으로 구조를 만들기</li>
-            <li>설정 중심으로 스타일을 통일하기</li>
-            <li>미리보기 → 공유/배포 흐름을 단순화하기</li>
-            <li>사용자 경험을 간소화하여 누구나 쉽게 시작할 수 있도록 지원하기</li>
-          </ul>
-        </div>
-      </div>
-    </section>
+        openBtn.onclick = () => modal.classList.remove('hidden');
+        closeBtn.onclick = backdrop.onclick = () => modal.classList.add('hidden');
 
-    <!-- 기술/차별점 -->
-    <section id="tech">
-      <h2 class="sectitle">기술/차별점</h2>
-      <p class="secdesc">“쉽게 만들되, 결과물은 탄탄하게”를 목표로 합니다.</p>
-
-      <div class="cards">
-        <div class="card feat">
-          <h3>블록 기반 설계</h3>
-          <p>섹션/버튼/카드/갤러리/문의 폼을 블록으로 조립하듯 구성합니다.</p>
-        </div>
-        <div class="card feat">
-          <h3>반응형 레이아웃(목표)</h3>
-          <p>모바일·태블릿·PC에서 자연스럽게 보이도록 자동 정렬을 제공합니다.</p>
-        </div>
-        <div class="card feat">
-          <h3>확장 가능한 구조</h3>
-          <p>교육용, 포트폴리오, 소규모 랜딩 등 다양한 목적에 맞게 확장합니다.</p>
-        </div>
-      </div>
-    </section>
-
-    <!-- 기존 서비스 소개 섹션(#product)은 제거되었습니다. 주요 기능은 아래 features 섹션에서 소개됩니다. -->
-
-    <!-- 주요 기능 및 장점 -->
-    <section id="features">
-      <h2 class="sectitle">주요 기능 및 장점</h2>
-      <p class="secdesc">우리 서비스의 핵심 기능과 장점을 소개합니다.</p>
-      <div class="cards">
-        <div class="card feat">
-          <h3>드래그 앤 드롭 블록 편집기</h3>
-          <p>코딩 지식 없이도 섹션, 버튼, 이미지 등을 드래그 앤 드롭으로 배치하여 웹사이트를 구성할 수 있습니다.</p>
-        </div>
-        <div class="card feat">
-          <h3>템플릿 라이브러리</h3>
-          <p>초보자와 소상공인을 위한 다양한 산업별 템플릿을 제공하여 빠르게 시작할 수 있습니다.</p>
-        </div>
-        <div class="card feat">
-          <h3>반응형 디자인 지원</h3>
-          <p>모바일·태블릿·PC 등 모든 기기에서 자연스럽게 보이도록 설계되었습니다.(목표)</p>
-        </div>
-        <div class="card feat">
-          <h3>외부 서비스 연동</h3>
-          <p>결제 시스템, 예약 기능, 이메일 마케팅 등 다양한 제3자 서비스를 손쉽게 통합할 수 있습니다.</p>
-        </div>
-        <div class="card feat">
-          <h3>실시간 협업</h3>
-          <p>팀원들과 동시에 작업하고 버전 히스토리를 관리하여 효율적으로 협업할 수 있습니다.</p>
-        </div>
-        <div class="card feat">
-          <h3>내장 통계 및 분석</h3>
-          <p>사이트 방문자 수, 페이지 조회수 등 기본적인 통계와 분석 기능을 제공하여 성장 전략을 세울 수 있습니다.</p>
-        </div>
-      </div>
-    </section>
-
-    <!-- 문의 -->
-    <section id="contact">
-      <h2 class="sectitle">문의</h2>
-      <p class="secdesc">
-        제휴·교육 도입·베타 테스트 관련 문의를 남겨주세요. 
-      </p>
-
-      <div class="card" style="padding:16px;">
-        <!-- Honeypot (bots often fill this). Hidden from users. -->
-        <div style="position:absolute; left:-10000px; top:auto; width:1px; height:1px; overflow:hidden;" aria-hidden="true">
-          <label for="website">website</label>
-          <input id="website" class="input" type="text" autocomplete="off" tabindex="-1" />
-        </div>
-
-        <div class="row" style="grid-template-columns: 1fr;">
-          <input
-            class="input"
-            id="email"
-            type="email"
-            inputmode="email"
-            autocomplete="email"
-            placeholder="회신 받을 이메일"
-            aria-label="회신 받을 이메일"
-            maxlength="120"
-            required
-          />
-        </div>
-        <div style="height:10px"></div>
-        <textarea
-          class="input"
-          id="msg"
-          rows="4"
-          placeholder="문의 내용(예: 베타 사용, 협업 제안, 기능 요청 등)"
-          aria-label="문의 내용"
-          maxlength="2000"
-          required
-        ></textarea>
-
-        <div class="btnline">
-          <button class="cta" id="submitInquiry" type="button">제출하기 →</button>
-        </div>
-
-        <div class="note">
-          * 제출 시 이메일 앱이 열리며, 내용이 자동으로 채워집니다.
-        </div>
-      </div>
-    </section>
-
-    <!-- 푸터 -->
-    <div class="footer">
-      <div class="footgrid">
-        <div>
-          <div style="color:var(--text); font-weight:800;">Blockweb Studio</div>
-          <div>공식 홈페이지 · Korea</div>
-        </div>
-        <div class="mini">
-          <a href="#about">회사소개</a>
-          <a href="#tech">기술/차별점</a>
-          <!-- 기존 서비스 링크(#product)를 제거하고 기능 링크만 남겼습니다 -->
-          <a href="#features">주요 기능</a>
-          <a href="#contact">문의</a>
-          <!-- Theme toggle removed: site only uses a single light theme -->
-        </div>
-      </div>
-      <div style="margin-top:10px;">© <span id="y"></span> Blockweb Studio. All rights reserved.</div>
-    </div>
-  </main>
-
-  <div class="toast" id="toast" role="status" aria-live="polite"></div>
-
-  <script>
-    // ✅ 여기에 “웹사이트 만드는 서비스(앱) 링크” 넣기
-    const YOUR_BUILDER_URL = "https://blockwebstudio.com"; // TODO: 빌더/앱 URL이 생기면 여기로 변경
-    // 문의 수신 메일(Cloudflare Email Routing으로 Gmail로 전달되도록 설정 가능)
-    const CONTACT_TO = "contact@blockwebstudio.com";
-
-    // 공통 이동
-    function goBuilder() {
-      window.location.href = YOUR_BUILDER_URL;
-    }
-    document.querySelectorAll(".js-go-builder").forEach((btn) => {
-      btn.addEventListener("click", goBuilder);
-    });
-
-    // 문의 UX: 이메일만 받고 제출(메일 초안 열기)
-    const toast = document.getElementById("toast");
-    function showToast(text){
-      toast.textContent = text;
-      toast.style.display = "block";
-      clearTimeout(window.__t);
-      window.__t = setTimeout(()=> toast.style.display="none", 2200);
-    }
-
-    // 간단한 스팸 방지: 연속 클릭 제한(클라이언트 레벨)
-    let lastSubmitAt = 0;
-
-    document.getElementById("submitInquiry").addEventListener("click", () => {
-      // Honeypot: 사람이면 비어 있어야 함
-      const hp = (document.getElementById("website")?.value || "").trim();
-      if (hp) return;
-
-      // Cooldown: 3초 내 재시도 방지
-      const now = Date.now();
-      if (now - lastSubmitAt < 3000) {
-        showToast("잠시 후 다시 시도해주세요.");
-        return;
-      }
-      lastSubmitAt = now;
-
-      const fromEmail = document.getElementById("email").value.trim();
-      const msg = document.getElementById("msg").value.trim();
-
-      if (!fromEmail) {
-        showToast("회신 받을 이메일을 입력해주세요.");
-        return;
-      }
-      // 아주 간단한 이메일 형식 체크
-      const emailOk = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(fromEmail);
-      if (!emailOk) {
-        showToast("이메일 형식이 올바르지 않습니다.");
-        return;
-      }
-      if (!msg) {
-        showToast("문의 내용을 입력해주세요.");
-        return;
-      }
-
-      // mailto 인젝션 방지: 반드시 인코딩
-      const subject = encodeURIComponent("[문의] 블록웹");
-      const body = encodeURIComponent(
-`회신 이메일: ${fromEmail}
-
-내용:
-${msg}`
-      );
-
-      window.location.href = `mailto:${CONTACT_TO}?subject=${subject}&body=${body}`;
-    });
-
-    document.getElementById("y").textContent = new Date().getFullYear();
-    /* The dark/light mode toggle has been removed.  The site always uses
-       the light theme defined in the CSS variables.  If additional
-       interactive behaviour is required later, add your functions here. */
-  </script>
+        form.onsubmit = (e) => {
+            e.preventDefault();
+            const regex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+            if(!regex.test(emailInput.value)) {
+                errorText.classList.remove('hidden');
+                emailInput.classList.add('border-red-500', 'bg-red-50');
+            } else {
+                alert("성공적으로 접수되었습니다!");
+                modal.classList.add('hidden');
+                form.reset();
+                errorText.classList.add('hidden');
+                emailInput.classList.remove('border-red-500', 'bg-red-50');
+            }
+        };
+    </script>
 </body>
 </html>
