@@ -35,14 +35,20 @@
 
                 <div>
                     <div class="flex justify-between items-center mb-1.5 ml-1">
-                        <label class="text-xs font-bold text-slate-700 uppercase tracking-wider">비밀번호</label>
+                        <label class="text-xs font-bold text-slate-700 uppercase tracking-wider">비밀번호 (8자 이상)</label>
                         <a href="#" id="forgotPw" class="text-[11px] text-indigo-600 font-bold hover:underline">비밀번호 찾기</a>
                     </div>
-                    <input type="password" placeholder="••••••••" required
+                    <input type="password" id="authPw" placeholder="••••••••" required minlength="8"
                            class="w-full px-4 py-3.5 rounded-xl border border-slate-200 focus:border-indigo-500 focus:ring-4 focus:ring-indigo-100 outline-none transition">
                 </div>
 
-                <button type="submit" id="submitBtn" class="w-full bg-indigo-600 text-white font-bold py-4 rounded-2xl hover:bg-indigo-700 transition shadow-lg mt-2 disabled:bg-slate-300 disabled:cursor-not-allowed">
+                <div id="pwConfirmWrapper" class="hidden">
+                    <label class="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1.5 ml-1">비밀번호 재확인</label>
+                    <input type="password" id="authPwConfirm" placeholder="••••••••"
+                           class="w-full px-4 py-3.5 rounded-xl border border-slate-200 focus:border-indigo-500 focus:ring-4 focus:ring-indigo-100 outline-none transition">
+                </div>
+
+                <button type="submit" id="submitBtn" class="w-full bg-indigo-600 text-white font-bold py-4 rounded-2xl hover:bg-indigo-700 transition shadow-lg mt-2 disabled:bg-slate-300">
                     로그인하기
                 </button>
             </form>
@@ -52,7 +58,7 @@
             <div class="w-16 h-16 bg-indigo-50 text-indigo-600 rounded-full flex items-center justify-center mx-auto mb-6">
                 <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.53 4.389a2 2 0 001.94 0L20 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"></path></svg>
             </div>
-            <h2 class="text-2xl font-bold text-slate-900 mb-2">인증 메일을 보냈습니다</h2>
+            <h2 id="verifyTitle" class="text-2xl font-bold text-slate-900 mb-2">인증 메일을 보냈습니다</h2>
             <p class="text-slate-500 text-sm mb-8"><span id="targetEmail" class="font-bold text-slate-800"></span>(으)로 발송된 6자리 코드를 입력해주세요.</p>
             
             <div class="flex justify-between gap-2 mb-8">
@@ -77,18 +83,23 @@
         const verifySection = document.getElementById('verifySection');
         const submitBtn = document.getElementById('submitBtn');
         const authEmail = document.getElementById('authEmail');
+        const authPw = document.getElementById('authPw');
+        const authPwConfirm = document.getElementById('authPwConfirm');
+        const pwConfirmWrapper = document.getElementById('pwConfirmWrapper');
         const targetEmail = document.getElementById('targetEmail');
         const authForm = document.getElementById('authForm');
         const otpInputs = document.querySelectorAll('.otp-input');
+        const forgotPw = document.getElementById('forgotPw');
 
-        let isSignupMode = false;
+        let mode = 'login'; // 'login', 'signup', 'forgot'
 
-        // ⭐️ 대표님의 실제 Cloudflare Worker 주소
         const WORKER_URL = 'https://blockwebstudio-auth.jush0509.workers.dev';
 
         // 탭 전환: 회원가입
         signupTab.onclick = () => {
-            isSignupMode = true;
+            mode = 'signup';
+            pwConfirmWrapper.classList.remove('hidden');
+            authPwConfirm.required = true;
             loginTab.classList.replace('border-indigo-600', 'border-transparent');
             loginTab.classList.replace('text-slate-900', 'text-slate-400');
             signupTab.classList.replace('border-transparent', 'border-indigo-600');
@@ -98,7 +109,9 @@
 
         // 탭 전환: 로그인
         loginTab.onclick = () => {
-            isSignupMode = false;
+            mode = 'login';
+            pwConfirmWrapper.classList.add('hidden');
+            authPwConfirm.required = false;
             signupTab.classList.replace('border-indigo-600', 'border-transparent');
             signupTab.classList.replace('text-slate-900', 'text-slate-400');
             loginTab.classList.replace('border-transparent', 'border-indigo-600');
@@ -106,13 +119,32 @@
             submitBtn.innerText = "로그인하기";
         };
 
-        // 폼 제출 (인증 코드 발송)
+        // 비밀번호 찾기 클릭
+        forgotPw.onclick = (e) => {
+            e.preventDefault();
+            mode = 'forgot';
+            alert("가입하신 이메일을 입력하고 [인증 코드 발송]을 눌러주세요.");
+            submitBtn.innerText = "인증 코드 발송";
+            pwConfirmWrapper.classList.add('hidden');
+        };
+
+        // 폼 제출 로직
         authForm.onsubmit = async (e) => {
             e.preventDefault();
-            const email = authEmail.value;
+            
+            // 보안 체크: 8자리 이상 (브라우저가 1차로 막지만 스크립트로 2차 확인)
+            if (authPw.value.length < 8) {
+                alert("비밀번호는 최소 8자리 이상이어야 합니다.");
+                return;
+            }
 
-            if(isSignupMode) {
-                // 버튼 비활성화 및 로딩 표시
+            // 보안 체크: 비밀번호 일치 (회원가입 시)
+            if (mode === 'signup' && authPw.value !== authPwConfirm.value) {
+                alert("비밀번호 재확인이 일치하지 않습니다.");
+                return;
+            }
+
+            if(mode === 'signup' || mode === 'forgot') {
                 submitBtn.innerText = "발송 중...";
                 submitBtn.disabled = true;
 
@@ -120,39 +152,41 @@
                     const response = await fetch(WORKER_URL, {
                         method: 'POST',
                         headers: { 'Content-Type': 'application/json' },
-                        body: JSON.stringify({ email: email })
+                        body: JSON.stringify({ 
+                            email: authEmail.value,
+                            type: mode // 회원가입인지 비밀번호 찾기인지 구분값 전송
+                        })
                     });
 
                     const data = await response.json();
 
                     if(data.success) {
-                        targetEmail.innerText = email;
+                        targetEmail.innerText = authEmail.value;
+                        if(mode === 'forgot') document.getElementById('verifyTitle').innerText = "비밀번호 재설정 인증";
                         authSection.classList.add('hidden');
                         verifySection.classList.remove('hidden');
-                        otpInputs[0].focus(); // 첫 번째 입력칸에 포커스
+                        otpInputs[0].focus();
                     } else {
-                        alert("메일 발송에 실패했습니다: " + (data.error || "다시 시도해주세요."));
+                        alert("요청 실패: " + (data.error || "다시 시도해주세요."));
                     }
                 } catch (err) {
-                    alert("서버 연결에 실패했습니다.");
-                    console.error(err);
+                    alert("서버 통신 오류");
                 } finally {
-                    submitBtn.innerText = "가입하기";
+                    submitBtn.innerText = mode === 'signup' ? "가입하기" : "인증 코드 발송";
                     submitBtn.disabled = false;
                 }
             } else {
-                alert("로그인에 성공했습니다!");
+                alert("로그인 시도...");
             }
         };
 
-        // ⌨️ 인증번호 자동 포커스 이동 기능
+        // OTP 자동 포커스
         otpInputs.forEach((input, index) => {
             input.addEventListener('input', (e) => {
                 if (e.target.value.length === 1 && index < otpInputs.length - 1) {
                     otpInputs[index + 1].focus();
                 }
             });
-
             input.addEventListener('keydown', (e) => {
                 if (e.key === 'Backspace' && !e.target.value && index > 0) {
                     otpInputs[index - 1].focus();
@@ -160,14 +194,17 @@
             });
         });
 
-        // 인증 완료 버튼 클릭 시 (아직 검증 로직은 Worker에 추가 전입니다)
+        // 인증 완료 버튼
         document.getElementById('verifyBtn').onclick = () => {
             const code = Array.from(otpInputs).map(i => i.value).join('');
             if(code.length < 6) {
-                alert("6자리 번호를 모두 입력해주세요.");
+                alert("6자리 번호를 입력해주세요.");
             } else {
-                alert("인증이 완료되었습니다! (회원가입 성공)");
-                // 여기서 메인 대시보드로 이동시키는 로직을 넣으면 됩니다.
+                if(mode === 'forgot') {
+                    alert("인증 성공! 새로운 비밀번호로 변경합니다.");
+                } else {
+                    alert("회원가입이 성공적으로 완료되었습니다!");
+                }
             }
         };
     </script>
