@@ -174,7 +174,7 @@
                     submitBtn.disabled = false;
                 }
             } 
-            // [Case B] 로그인 시도
+            // [Case B] 로그인 시도 (수정된 로직)
             else {
                 submitBtn.innerText = "로그인 중...";
                 submitBtn.disabled = true;
@@ -190,8 +190,13 @@
                     });
                     const data = await response.json();
                     if(data.success) {
+                        // 세션 정보 저장
+                        localStorage.setItem('bs_auth_token', data.token);
+                        localStorage.setItem('bs_user_email', data.email);
+                        
                         alert("로그인에 성공했습니다!");
-                        window.location.href = "index.html"; 
+                        // 히스토리를 남기지 않고 메인으로 이동
+                        window.location.replace("index.html"); 
                     } else {
                         alert(data.error || "로그인 정보를 확인해주세요.");
                     }

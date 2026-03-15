@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta http-equiv="Content-Security-Policy" content="upgrade-insecure-requests; default-src 'self' https:; script-src 'self' https://cdn.tailwindcss.com 'unsafe-inline'; style-src 'self' https://cdn.jsdelivr.net 'unsafe-inline'; font-src 'self' https://cdn.jsdelivr.net;">
+    <meta http-equiv="Content-Security-Policy" content="upgrade-insecure-requests; default-src 'self' https:; script-src 'self' https://cdn.tailwindcss.com 'unsafe-inline'; style-src 'self' https://cdn.jsdelivr.net 'unsafe-inline'; font-src 'self' https://cdn.jsdelivr.net; connect-src 'self' https://blockwebstudio-auth.jush0509.workers.dev;">
     
     <title>블록셀(BlockCel) by blockwebstudio</title>
     <link rel="stylesheet" as="style" crossorigin href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.min.css" />
@@ -18,11 +18,19 @@
                 <div class="w-6 h-6 bg-indigo-600 rounded-md"></div>
                 blockwebstudio
             </div>
+            
             <div class="flex items-center space-x-4">
-                <a href="login.html" class="text-sm font-semibold text-slate-600 hover:text-slate-900 transition">로그인</a>
-                <a href="login.html" class="text-sm font-semibold bg-slate-900 text-white px-5 py-2.5 rounded-lg hover:bg-slate-800 transition shadow-sm">
-                    무료로 시작하기
-                </a>
+                <div id="guest-menu" class="flex items-center space-x-4">
+                    <a href="login.html" class="text-sm font-semibold text-slate-600 hover:text-slate-900 transition">로그인</a>
+                    <a href="login.html" class="text-sm font-semibold bg-slate-900 text-white px-5 py-2.5 rounded-lg hover:bg-slate-800 transition shadow-sm">
+                        무료로 시작하기
+                    </a>
+                </div>
+
+                <div id="user-menu" class="hidden flex items-center space-x-4">
+                    <a href="dashboard.html" class="text-sm font-bold text-indigo-600 hover:text-indigo-700 transition">내 대시보드</a>
+                    <button id="logoutBtn" class="text-sm font-medium text-slate-500 hover:text-red-500 transition">로그아웃</button>
+                </div>
             </div>
         </div>
     </header>
@@ -70,7 +78,7 @@
                     <li>✔️ 월 10회 질문 무료</li>
                     <li>✔️ 기본 엑셀 함수 생성</li>
                 </ul>
-                <a href="login.html" class="w-full py-3.5 rounded-xl font-bold text-center text-slate-700 bg-slate-100 hover:bg-slate-200 transition">무료로 시작하기</a>
+                <a href="login.html" class="auth-link w-full py-3.5 rounded-xl font-bold text-center text-slate-700 bg-slate-100 hover:bg-slate-200 transition">무료로 시작하기</a>
             </div>
 
             <div class="bg-slate-900 rounded-3xl p-8 border border-slate-800 shadow-2xl flex flex-col relative transform md:-translate-y-4">
@@ -82,7 +90,7 @@
                     <li class="text-white font-semibold">✔️ 드래그 앤 매크로(VBA) 생성</li>
                     <li class="text-white font-semibold">✔️ 복잡한 세금/감가상각 계산</li>
                 </ul>
-                <a href="login.html" class="w-full py-3.5 rounded-xl font-bold text-center text-white bg-indigo-600 hover:bg-indigo-500 transition shadow-lg">Pro 구독하기</a>
+                <a href="login.html" class="auth-link w-full py-3.5 rounded-xl font-bold text-center text-white bg-indigo-600 hover:bg-indigo-500 transition shadow-lg">Pro 구독하기</a>
             </div>
 
             <div class="bg-white rounded-3xl p-8 border border-slate-200 shadow-sm flex flex-col relative overflow-hidden">
@@ -94,10 +102,11 @@
                     <li class="font-bold text-slate-900">✔️ 팀원 계정 일괄 관리</li>
                     <li class="font-bold text-slate-900">✔️ 사내 공용 프롬프트 공유</li>
                 </ul>
-                <a href="login.html" class="w-full py-3.5 rounded-xl font-bold text-center text-indigo-700 bg-indigo-50 hover:bg-indigo-100 transition border border-indigo-100">도입 문의하기</a>
+                <a href="login.html" class="auth-link w-full py-3.5 rounded-xl font-bold text-center text-indigo-700 bg-indigo-50 hover:bg-indigo-100 transition border border-indigo-100">도입 문의하기</a>
             </div>
         </div>
     </section>
+
     <footer class="bg-white pt-16 pb-8 border-t border-slate-100">
         <div class="max-w-6xl mx-auto px-6 flex flex-col md:flex-row justify-between items-center gap-8 mb-8">
             <div class="text-left">
@@ -135,6 +144,7 @@
     </div>
 
     <script>
+        // 기존 CS 모달 및 폼 로직
         const modal = document.getElementById('csModal');
         const openBtn = document.getElementById('openModalBtn');
         const closeBtn = document.getElementById('closeModalBtn');
@@ -160,6 +170,38 @@
                 emailInput.classList.remove('border-red-500', 'bg-red-50');
             }
         };
+
+        // --- 추가된 로그인 상태 관리 로직 ---
+        document.addEventListener('DOMContentLoaded', () => {
+            const token = localStorage.getItem('bs_auth_token');
+            const guestMenu = document.getElementById('guest-menu');
+            const userMenu = document.getElementById('user-menu');
+            const logoutBtn = document.getElementById('logoutBtn');
+            const authLinks = document.querySelectorAll('.auth-link');
+
+            // 1. 로그인 상태 확인 및 UI 전환
+            if (token) {
+                if(guestMenu) guestMenu.classList.add('hidden');
+                if(userMenu) userMenu.classList.remove('hidden');
+                
+                // 로그인 상태일 때 카드 내 '시작하기' 버튼들을 대시보드로 연결
+                authLinks.forEach(link => {
+                    link.href = "dashboard.html";
+                    if(link.innerText.includes("시작하기")) link.innerText = "대시보드로 이동";
+                });
+            }
+
+            // 2. 로그아웃 기능
+            if (logoutBtn) {
+                logoutBtn.onclick = () => {
+                    if (confirm("로그아웃 하시겠습니까?")) {
+                        localStorage.removeItem('bs_auth_token');
+                        localStorage.removeItem('bs_user_email');
+                        location.reload();
+                    }
+                };
+            }
+        });
     </script>
 </body>
 </html>

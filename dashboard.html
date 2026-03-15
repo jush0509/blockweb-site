@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>마이페이지 - blockwebstudio</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" crossorigin href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.min.css" />
+    <style>body { font-family: 'Pretendard', sans-serif; }</style>
+</head>
+<body class="bg-[#F8FAFC] text-slate-800 antialiased min-h-screen flex flex-col">
+
+    <nav class="bg-white border-b border-slate-200">
+        <div class="max-w-5xl mx-auto px-6 py-4 flex justify-between items-center">
+            <div class="font-extrabold text-xl tracking-tight text-slate-900 flex items-center gap-2">
+                <div class="w-5 h-5 bg-indigo-600 rounded"></div>
+                blockwebstudio
+            </div>
+            <button id="logoutBtn" class="text-sm font-bold text-slate-400 hover:text-red-500 transition">로그아웃</button>
+        </div>
+    </nav>
+
+    <main class="flex-1 max-w-2xl mx-auto w-full px-6 py-12">
+        <div class="bg-white rounded-3xl p-8 border border-slate-200 shadow-sm overflow-hidden relative">
+            <div class="absolute top-8 right-8 bg-indigo-50 text-indigo-600 px-3 py-1 rounded-full text-xs font-bold uppercase tracking-wider">
+                MVP Beta
+            </div>
+
+            <h1 class="text-2xl font-bold mb-1">마이페이지</h1>
+            <p id="userEmail" class="text-slate-500 mb-8 font-medium italic">loading...</p>
+
+            <div class="space-y-6">
+                <div class="bg-slate-50 rounded-2xl p-6 border border-slate-100">
+                    <div class="flex justify-between items-end mb-2">
+                        <span class="text-sm font-bold text-slate-400 uppercase tracking-tighter">이용 중인 플랜</span>
+                        <span id="planStatus" class="text-2xl font-black text-indigo-600 tracking-tight leading-none">FREE</span>
+                    </div>
+                    <div class="h-1.5 w-full bg-slate-200 rounded-full overflow-hidden">
+                        <div class="bg-indigo-600 h-full w-[10%]"></div>
+                    </div>
+                    <p class="text-[11px] text-slate-400 mt-3 font-medium text-center">오픈 베타 기간 동안 모든 유저에게 기본 기능이 제공됩니다.</p>
+                </div>
+
+                <div class="text-center py-4">
+                    <p class="text-sm text-slate-600 leading-relaxed">
+                        엑셀(Add-in)을 실행하고 위 계정으로 로그인하세요.<br>
+                        <strong>현재 베타 버전은 결제 없이 모든 기능을 이용할 수 있습니다.</strong>
+                    </p>
+                </div>
+            </div>
+        </div>
+        
+        <p class="text-center text-slate-400 text-xs mt-8">보안 안내: 귀하의 결제 수단이나 엑셀 데이터는 절대 서버에 저장되지 않습니다.</p>
+    </main>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const token = localStorage.getItem('bs_auth_token');
+            const email = localStorage.getItem('bs_user_email');
+
+            if (!token) {
+                window.location.replace("login.html");
+                return;
+            }
+
+            document.getElementById('userEmail').innerText = email;
+            
+            // 임시로 모든 유저에게 FREE 표시 (나중엔 API로 체크)
+            document.getElementById('planStatus').innerText = "PRO TRIAL";
+
+            document.getElementById('logoutBtn').onclick = () => {
+                if(confirm("로그아웃 하시겠습니까?")) {
+                    localStorage.clear();
+                    window.location.replace("index.html");
+                }
+            };
+        });
+    </script>
+</body>
+</html>
