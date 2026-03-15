@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta http-equiv="Content-Security-Policy" content="upgrade-insecure-requests; default-src 'self' https:; script-src 'self' https://cdn.tailwindcss.com 'unsafe-inline'; style-src 'self' https://cdn.jsdelivr.net 'unsafe-inline'; font-src 'self' https://cdn.jsdelivr.net; connect-src 'self' https://blockwebstudio-auth.jush0509.workers.dev;">
+    <meta http-equiv="Content-Security-Policy" content="upgrade-insecure-requests; default-src 'self' https:; script-src 'self' https://cdn.tailwindcss.com 'unsafe-inline'; style-src 'self' https://cdn.jsdelivr.net 'unsafe-inline'; font-src 'self' https://cdn.jsdelivr.net; connect-src 'self' https://blockwebstudio-auth.jush0509.workers.dev; media-src 'self' data: blob:;">
     
     <title>BlockCel AI | 엑셀 함수 생성부터 데이터 분석까지 한글로 해결</title>
     <meta name="description" content="업무 시간을 혁신적으로 단축하는 BlockCel AI를 만나보세요. 복잡한 엑셀 함수 생성은 물론, 데이터 분석 리포트까지 한글 명령 한 번으로 1초 만에 완성합니다.">
@@ -60,11 +60,20 @@
                 <div class="w-3 h-3 rounded-full bg-yellow-500"></div>
                 <div class="w-3 h-3 rounded-full bg-green-500"></div>
             </div>
-            <div class="aspect-video bg-slate-900 flex flex-col items-center justify-center text-slate-400 cursor-pointer group hover:bg-slate-800 transition">
-                <div class="w-16 h-16 bg-indigo-600 rounded-full flex items-center justify-center mb-4 group-hover:scale-110 transition shadow-lg">
-                    <svg class="w-8 h-8 text-white ml-1" fill="currentColor" viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>
-                </div>
-                <span class="font-semibold text-lg text-white">BlockCel AI 데이터 분석 시연 보기 (15초)</span>
+            
+            <div class="aspect-video bg-slate-900 flex items-center justify-center overflow-hidden">
+                <video 
+                    id="hero-video"
+                    class="w-full h-full object-cover" 
+                    autoplay 
+                    muted 
+                    loop 
+                    playsinline
+                    preload="auto"
+                    poster="https://blockwebstudio.com/logo.png">
+                    <source src="./videos/demo.mp4" type="video/mp4">
+                    브라우저가 비디오를 지원하지 않습니다.
+                </video>
             </div>
         </div>
     </section>
@@ -98,7 +107,7 @@
                 <div class="mb-8"><span class="text-4xl font-extrabold text-white">₩9,900</span><span class="text-slate-400">/월</span></div>
                 <ul class="space-y-4 mb-8 flex-1 text-slate-300 text-sm">
                     <li class="text-white font-semibold">✔️ 무제한 엑셀 수식 및 VBA 생성</li>
-                    <li class="text-white font-semibold">✔️ **고급 데이터 시각화 분석**</li>
+                    <li class="text-white font-semibold">✔️ 고급 데이터 시각화 분석</li>
                     <li class="text-white font-semibold">✔️ 파일 업로드 기반 데이터 인사이트</li>
                 </ul>
                 <a href="login.html" class="auth-link w-full py-3.5 rounded-xl font-bold text-center text-white bg-indigo-600 hover:bg-indigo-500 transition shadow-lg">Pro 구독하기</a>
@@ -133,7 +142,6 @@
     </footer>
 
     <script>
-        // (기존 스크립트 그대로 유지)
         document.addEventListener('DOMContentLoaded', () => {
             const token = localStorage.getItem('bs_auth_token');
             const guestMenu = document.getElementById('guest-menu');
