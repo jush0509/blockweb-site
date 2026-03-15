@@ -12,10 +12,10 @@
 
     <nav class="bg-white border-b border-slate-200">
         <div class="max-w-5xl mx-auto px-6 py-4 flex justify-between items-center">
-            <div class="font-extrabold text-xl tracking-tight text-slate-900 flex items-center gap-2">
+            <a href="index.html" class="font-extrabold text-xl tracking-tight text-slate-900 flex items-center gap-2 hover:opacity-70 transition-opacity">
                 <div class="w-5 h-5 bg-indigo-600 rounded"></div>
                 blockwebstudio
-            </div>
+            </a>
             <button id="logoutBtn" class="text-sm font-bold text-slate-400 hover:text-red-500 transition">로그아웃</button>
         </div>
     </nav>
@@ -70,7 +70,9 @@
 
             document.getElementById('logoutBtn').onclick = () => {
                 if(confirm("로그아웃 하시겠습니까?")) {
-                    localStorage.clear();
+                    // 로그아웃 시 토큰 및 이메일 정보 삭제
+                    localStorage.removeItem('bs_auth_token');
+                    localStorage.removeItem('bs_user_email');
                     window.location.replace("index.html");
                 }
             };
